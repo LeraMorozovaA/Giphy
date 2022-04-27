@@ -17,7 +17,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
-    private const val BASE_URL = "api.giphy.com/v1/"
+    private const val BASE_URL = "https://api.giphy.com/v1/"
+    private const val API_KEY = "1yIMTW5O73I9UZc3hh49SbNltvellX2x"
 
     @Singleton
     @Provides
@@ -30,6 +31,18 @@ object ApiModule {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             addInterceptor(logging)
+            addInterceptor { chain ->
+                val original = chain.request()
+                val originalHttpUrl = original.url
+                val url = originalHttpUrl.newBuilder()
+                    .addQueryParameter("api_key", API_KEY)
+                    .build()
+
+                val requestBuilder = original.newBuilder().url(url)
+
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
         }.build()
     }
 
