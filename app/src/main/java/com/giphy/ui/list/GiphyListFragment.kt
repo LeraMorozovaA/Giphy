@@ -22,7 +22,9 @@ import com.giphy.network.model.Giphy
 import com.giphy.ui.adapters.GiphyListAdapter
 import com.giphy.ui.common.ViewState
 import com.giphy.ui.common.hideKeyboard
+import com.giphy.ui.common.showAlert
 import com.giphy.ui.details.DetailsFragment.Companion.ARG_GIPHY_POSITION
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -67,13 +69,13 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
                 text?.clear()
                 clearFocus()
                 hideKeyboard()
-                showList(viewModel.giphyList.value)
+                viewModel.getGiphyList()
             }
         }
 
         binding.editText.doBeforeTextChanged { _, _, _, after ->
             if (after == 0)
-                showList(viewModel.giphyList.value)
+                viewModel.getGiphyList()
         }
 
         binding.editText.doAfterTextChanged {
@@ -97,6 +99,11 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
     }
 
     private fun showErrorAlert() {
+        MaterialAlertDialogBuilder(requireContext()).showAlert(
+            title = getString(R.string.alert_title),
+            message = getString(R.string.alert_message),
+            textButton = getString(R.string.alert_button)
+        )
     }
 
     private fun showList(data: List<Giphy>) {

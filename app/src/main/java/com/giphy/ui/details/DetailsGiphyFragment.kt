@@ -46,7 +46,7 @@ class DetailsGiphyFragment: Fragment(R.layout.fragment_details_giphy) {
 
             Glide.with(requireContext())
                 .asGif()
-                .load(giphy.images.original.url)
+                .load(giphy.url)
                 .into(binding.imageView)
 
             with(binding){

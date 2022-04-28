@@ -25,19 +25,19 @@ class DetailsGiphyViewModel @Inject constructor(
     }
 
     suspend fun getGiphyPositionInListById(id: String): Int {
-        return repository.getGiphyList().indexOfFirst { it.id == id }
+        return repository.getGiphyListFromDb().indexOfFirst { it.id == id }
     }
 
     fun getGiphyById(id: String) = viewModelScope.launch {
-        giphy.value = repository.getGiphyList().find { it.id == id }
+        giphy.value = repository.getGiphyListFromDb().find { it.id == id }
     }
 
     private fun getGiphyListFromDb() = viewModelScope.launch {
         try {
-            val list = repository.getGiphyList()
+            val list = repository.getGiphyListFromDb()
             viewState.value = ViewState.Data(list)
         } catch (e: Exception){
-            viewState.value = ViewState.Error(e)
+            viewState.value = ViewState.Error
         }
     }
 }

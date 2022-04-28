@@ -24,7 +24,7 @@ class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(Strin
                     .asGif()
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .load(images.original.url)
+                    .load(url)
                     .into(binding.itemGiphy)
 
                 holder.itemView.setOnClickListener { onClick.invoke(data[position].id) }

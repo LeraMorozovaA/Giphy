@@ -4,5 +4,5 @@ data class Giphy(
     val id: String,
     val title: String,
     val username: String,
-    val images: Images
+    val url: String
 )

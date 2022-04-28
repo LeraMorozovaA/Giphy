@@ -17,7 +17,6 @@ class GiphyListViewModel @Inject constructor(
 ) : ViewModel() {
 
     val viewState = MutableStateFlow<ViewState<List<Giphy>>>(ViewState.Idle)
-    val giphyList = MutableStateFlow<List<Giphy>>(listOf())
 
     init {
         getGiphyList()
@@ -29,18 +28,21 @@ class GiphyListViewModel @Inject constructor(
             val result = repository.getGiphyByQuery(query)
             viewState.value = ViewState.Data(result)
         } catch (e: Exception) {
-            viewState.value = ViewState.Error(e)
+            viewState.value = ViewState.Error
+            val list = repository.getGiphyListFromDb()
+            viewState.value = ViewState.Data(list)
         }
     }
 
-    private fun getGiphyList() = viewModelScope.launch {
+    fun getGiphyList() = viewModelScope.launch {
         try {
             viewState.value = ViewState.Loading
             val list = repository.getGiphyList()
-            giphyList.value = list
             viewState.value = ViewState.Data(list)
         } catch (e: Exception) {
-            viewState.value = ViewState.Error(e)
+            viewState.value = ViewState.Error
+            val list = repository.getGiphyListFromDb()
+            viewState.value = ViewState.Data(list)
         }
     }
 }

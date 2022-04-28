@@ -46,20 +46,20 @@ object ApiModule {
         }.build()
     }
 
-//    @Singleton
-//    @Provides
-//    fun provideApiService(okHttpClient: OkHttpClient): ApiService {
-//        val retrofit = Retrofit.Builder()
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .baseUrl(BASE_URL)
-//            .client(okHttpClient)
-//            .build()
-//
-//        return retrofit.create(ApiService::class.java)
-//    }
-
     @Singleton
     @Provides
-    fun provideApiServiceImpl(okHttpClient: OkHttpClient): ApiService = ApiServiceImpl()
+    fun provideApiService(okHttpClient: OkHttpClient): ApiService {
+        val retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)
+            .build()
+
+        return retrofit.create(ApiService::class.java)
+    }
+
+//    @Singleton
+//    @Provides
+//    fun provideApiServiceImpl(okHttpClient: OkHttpClient): ApiService = ApiServiceImpl()
 
 }
