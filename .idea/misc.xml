@@ -6,8 +6,12 @@
         <entry key="../../../../layout/custom_preview.xml" value="0.2984375" />
         <entry key="app/src/main/res/drawable/bg_edit_text.xml" value="0.177" />
         <entry key="app/src/main/res/drawable/ic_cancel.xml" value="0.177" />
+        <entry key="app/src/main/res/layout/activity_details_giphy.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/activity_giphy_list.xml" value="0.32180725097656254" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19610507246376813" />
+        <entry key="app/src/main/res/layout/fragment_details.xml" value="0.19610507246376813" />
+        <entry key="app/src/main/res/layout/fragment_details_giphy.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_giphy_list.xml" value="0.14488348530901723" />
         <entry key="app/src/main/res/layout/item_giphy.xml" value="0.19610507246376813" />
       </map>
     </option>

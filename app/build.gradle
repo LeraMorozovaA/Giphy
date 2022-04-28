@@ -79,8 +79,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
 
-    //RoundedImageView
-    implementation 'com.makeramen:roundedimageview:2.3.0'
+    //viewpager
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
 
 
     testImplementation 'junit:junit:4.13.2'

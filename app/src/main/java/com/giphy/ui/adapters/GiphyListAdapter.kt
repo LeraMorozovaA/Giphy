@@ -1,17 +1,15 @@
-package com.giphy.ui.list
+package com.giphy.ui.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.giphy.databinding.ItemGiphyBinding
 import com.giphy.network.model.Giphy
-import com.google.android.material.shape.RoundedCornerTreatment
 
 @SuppressLint("NotifyDataSetChanged")
-class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(Giphy)-> Unit) : RecyclerView.Adapter<GiphyListAdapter.GiphyViewHolder>() {
+class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(Int)-> Unit) : RecyclerView.Adapter<GiphyListAdapter.GiphyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GiphyViewHolder {
         val binding = ItemGiphyBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -27,7 +25,7 @@ class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(Giphy
                     .load(images.original.url)
                     .into(binding.itemGiphy)
 
-                holder.itemView.setOnClickListener { onClick.invoke(this) }
+                holder.itemView.setOnClickListener { onClick.invoke(position) }
             }
         }
     }

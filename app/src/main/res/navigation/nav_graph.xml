@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/giphyListFragment">
+
+    <fragment
+        android:id="@+id/giphyListFragment"
+        android:name="com.giphy.ui.list.GiphyListFragment"
+        android:label="DetailsFragment" >
+
+        <action
+            android:id="@+id/action_giphyListFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.giphy.ui.details.DetailsFragment"
+        android:label="DetailsFragment" />
+
+</navigation>

@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Giphy"
         android:name=".di.App">
         <activity
-            android:name=".ui.list.GiphyListActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
