@@ -1,10 +1,15 @@
 package com.giphy.ui.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doBeforeTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -47,8 +52,8 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
     }
 
     private fun setupRecyclerView() {
-        adapter = GiphyListAdapter(listOf(), onClick = { position ->
-            val bundle = bundleOf(ARG_GIPHY_POSITION to position)
+        adapter = GiphyListAdapter(listOf(), onClick = { id ->
+            val bundle = bundleOf(ARG_GIPHY_POSITION to id)
             findNavController().navigate(R.id.action_giphyListFragment_to_detailsFragment, bundle)
 
         })
@@ -62,17 +67,32 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
                 text?.clear()
                 clearFocus()
                 hideKeyboard()
+                showList(viewModel.giphyList.value)
             }
+        }
+
+        binding.editText.doBeforeTextChanged { _, _, _, after ->
+            if (after == 0)
+                showList(viewModel.giphyList.value)
+        }
+
+        binding.editText.doAfterTextChanged {
+            if (it.isNullOrBlank())
+                return@doAfterTextChanged
+
+            viewModel.searchGiphyByQuery(it.toString())
         }
     }
 
     private fun setupObserving() {
         viewModel.viewState.onEach { state ->
             when (state) {
-                is ViewState.Loading -> showProgress()
                 is ViewState.Data -> showList(state.data)
                 is ViewState.Error -> showErrorAlert()
             }
+
+            binding.progress.isVisible = state is ViewState.Loading
+
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
@@ -81,8 +101,6 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
 
     private fun showList(data: List<Giphy>) {
         adapter.updateList(data)
-    }
-
-    private fun showProgress() {
+        binding.textEmptyList.isVisible = data.isEmpty()
     }
 }

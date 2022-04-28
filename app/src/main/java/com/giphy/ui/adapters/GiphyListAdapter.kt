@@ -10,7 +10,7 @@ import com.giphy.databinding.ItemGiphyBinding
 import com.giphy.network.model.Giphy
 
 @SuppressLint("NotifyDataSetChanged")
-class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(Int)-> Unit) : RecyclerView.Adapter<GiphyListAdapter.GiphyViewHolder>() {
+class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(String)-> Unit) : RecyclerView.Adapter<GiphyListAdapter.GiphyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GiphyViewHolder {
         val binding = ItemGiphyBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -27,7 +27,7 @@ class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(Int)-
                     .load(images.original.url)
                     .into(binding.itemGiphy)
 
-                holder.itemView.setOnClickListener { onClick.invoke(position) }
+                holder.itemView.setOnClickListener { onClick.invoke(data[position].id) }
             }
         }
     }

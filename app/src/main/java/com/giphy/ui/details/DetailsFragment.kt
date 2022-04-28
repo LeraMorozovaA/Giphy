@@ -15,6 +15,7 @@ import com.giphy.ui.common.ViewState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailsFragment: Fragment(R.layout.fragment_details) {
@@ -45,10 +46,13 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
     private fun setupViewPager(data: List<Giphy>) {
         val pagerAdapter = ViewPagerAdapter(requireActivity())
             .apply { setData(data) }
-
-        val pos = requireArguments().getInt(ARG_GIPHY_POSITION)
         binding.viewPager.adapter = pagerAdapter
-        binding.viewPager.setCurrentItem(pos, false)
+
+        val id = requireArguments().getString(ARG_GIPHY_POSITION, "")
+        lifecycleScope.launch {
+           val pos = viewModel.getGiphyPositionInListById(id)
+            binding.viewPager.setCurrentItem(pos, false)
+        }
     }
 
     companion object {

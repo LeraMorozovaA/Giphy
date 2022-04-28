@@ -18,4 +18,10 @@ class ApiServiceImpl: ApiService {
 
         )
     }
+
+    override suspend fun getGiphyByQuery(q: String, limit: Int): GiphyResponse {
+        return GiphyResponse(listOf(
+            GiphyDto("u6FQFr9lSbjPwWbLjd","Celebrate Happy Birthday GIF by The Tonight Show Starring Jimmy Fallon","fallontonight", ImagesDto(OriginalImageDto("https://media4.giphy.com/media/u6FQFr9lSbjPwWbLjd/giphy.gif?cid=af679f2e6l01570y72230ucaiq65idhpsu2lyaat7oea0vsa&rid=giphy.gif&ct=g")))
+        ))
+    }
 }

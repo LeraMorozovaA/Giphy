@@ -9,4 +9,9 @@ interface ApiService {
     @GET("gifs/trending")
     suspend fun getGiphyList(@Query(value = "limit") limit: Int): GiphyResponse
 
+    @GET("gifs/search")
+    suspend fun getGiphyByQuery(
+        @Query(value = "q") q: String,
+        @Query(value = "limit") limit: Int
+    ): GiphyResponse
 }

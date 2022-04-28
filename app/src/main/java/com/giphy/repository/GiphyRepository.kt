@@ -8,9 +8,17 @@ import kotlinx.coroutines.withContext
 
 class GiphyRepository(private val apiService: ApiService) {
 
+    private val limit = 2
+
     suspend fun getGiphyList(): List<Giphy> {
         return withContext(Dispatchers.IO) {
-            apiService.getGiphyList(2).data.map { it.toModel() }
+            apiService.getGiphyList(limit).data.map { it.toModel() }
+        }
+    }
+
+    suspend fun getGiphyByQuery(query: String): List<Giphy> {
+        return withContext(Dispatchers.IO) {
+            apiService.getGiphyByQuery(query, limit).data.map { it.toModel() }
         }
     }
 }

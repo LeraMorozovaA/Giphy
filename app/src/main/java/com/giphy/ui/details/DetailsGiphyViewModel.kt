@@ -24,6 +24,10 @@ class DetailsGiphyViewModel @Inject constructor(
         getGiphyListFromDb()
     }
 
+    suspend fun getGiphyPositionInListById(id: String): Int {
+        return repository.getGiphyList().indexOfFirst { it.id == id }
+    }
+
     fun getGiphyById(id: String) = viewModelScope.launch {
         giphy.value = repository.getGiphyList().find { it.id == id }
     }
