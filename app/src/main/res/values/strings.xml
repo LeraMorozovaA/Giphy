@@ -6,5 +6,6 @@
 
     <string name="alert_title">Oops..</string>
     <string name="alert_message">Something went wrong, please try again.</string>
-    <string name="alert_button">Ok</string>
+    <string name="alert_message_try_later">Something went wrong, please try again later.</string>
+    <string name="alert_button">OK</string>
 </resources>

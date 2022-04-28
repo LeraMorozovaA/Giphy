@@ -11,9 +11,12 @@ fun EditText.hideKeyboard() {
     inputMethodManager.hideSoftInputFromWindow(this.windowToken, 0)
 }
 
-fun MaterialAlertDialogBuilder.showAlert(title: String, message: String, textButton: String) {
+fun MaterialAlertDialogBuilder.showAlert(title: String, message: String, textButton: String, onClick: (() -> Unit)? = null) {
     setTitle(title)
     setMessage(message)
-    setPositiveButton(textButton) { dialog, _ -> dialog.dismiss() }
+    setPositiveButton(textButton) { dialog, _ ->
+        onClick?.invoke()
+        dialog.dismiss()
+    }
     show()
 }

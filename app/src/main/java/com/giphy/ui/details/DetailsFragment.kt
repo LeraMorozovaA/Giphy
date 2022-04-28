@@ -7,11 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.giphy.R
 import com.giphy.databinding.FragmentDetailsBinding
 import com.giphy.network.model.Giphy
 import com.giphy.ui.adapters.ViewPagerAdapter
 import com.giphy.ui.common.ViewState
+import com.giphy.ui.common.showAlert
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,9 +41,20 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
         viewModel.viewState.onEach { state ->
             when (state) {
                 is ViewState.Data -> setupViewPager(state.data)
-               // is ViewState.Error -> showErrorAlert()
+                is ViewState.Error -> showErrorAlert()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun showErrorAlert() {
+        MaterialAlertDialogBuilder(requireContext()).showAlert(
+            title = getString(R.string.alert_title),
+            message = getString(R.string.alert_message_try_later),
+            textButton = getString(R.string.alert_button),
+            onClick = {
+                findNavController().navigateUp()
+            }
+        )
     }
 
     private fun setupViewPager(data: List<Giphy>) {
