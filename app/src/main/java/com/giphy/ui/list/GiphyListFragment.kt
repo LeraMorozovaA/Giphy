@@ -84,6 +84,10 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
 
             viewModel.searchGiphyByQuery(it.toString())
         }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.getGiphyList()
+        }
     }
 
     private fun setupObserving() {
@@ -94,6 +98,7 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
             }
 
             binding.progress.isVisible = state is ViewState.Loading
+            binding.swipeRefresh.isRefreshing = false
 
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
