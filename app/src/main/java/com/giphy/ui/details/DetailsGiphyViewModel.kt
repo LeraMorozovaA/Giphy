@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsGiphyViewModel @Inject constructor(
     private val repository: GiphyRepository
-): ViewModel()  {
+): ViewModel() {
 
     val viewState = MutableStateFlow<ViewState<List<Giphy>>>(ViewState.Idle)
     val giphy = MutableStateFlow<Giphy?>(null)

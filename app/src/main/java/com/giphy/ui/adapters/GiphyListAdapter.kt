@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.giphy.databinding.ItemGiphyBinding
 import com.giphy.network.model.Giphy
 
@@ -22,6 +23,7 @@ class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(Int)-
                 Glide.with(holder.itemView.context)
                     .asGif()
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .load(images.original.url)
                     .into(binding.itemGiphy)
 

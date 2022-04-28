@@ -1,12 +1,11 @@
 package com.giphy.ui.details
 
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -50,6 +49,11 @@ class DetailsGiphyFragment: Fragment(R.layout.fragment_details_giphy) {
                 .load(giphy.images.original.url)
                 .into(binding.imageView)
 
+            with(binding){
+                textViewTitle.text = giphy.title
+                textViewUsername.text = giphy.username
+                layoutData.isVisible = giphy.username.isNotEmpty()
+            }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
