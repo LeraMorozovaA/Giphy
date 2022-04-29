@@ -1,4 +1,4 @@
-package com.giphy.network.dto
+package com.giphy.api.dto
 
 data class GiphyDto(
     val id: String,

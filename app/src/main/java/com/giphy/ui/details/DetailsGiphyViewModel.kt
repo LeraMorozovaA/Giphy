@@ -1,9 +1,8 @@
 package com.giphy.ui.details
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.giphy.network.model.Giphy
+import com.giphy.api.model.Giphy
 import com.giphy.repository.GiphyRepository
 import com.giphy.ui.common.ViewState
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -1,12 +1,12 @@
-package com.giphy.network.mapper
+package com.giphy.api.mapper
 
 import com.giphy.data.model.GiphyEntity
-import com.giphy.network.dto.GiphyDto
-import com.giphy.network.dto.ImagesDto
-import com.giphy.network.dto.OriginalImageDto
-import com.giphy.network.model.Giphy
-import com.giphy.network.model.Images
-import com.giphy.network.model.OriginalImage
+import com.giphy.api.dto.GiphyDto
+import com.giphy.api.dto.ImagesDto
+import com.giphy.api.dto.OriginalImageDto
+import com.giphy.api.model.Giphy
+import com.giphy.api.model.Images
+import com.giphy.api.model.OriginalImage
 
 fun GiphyDto.toDataModel() = GiphyEntity(
     id = id,

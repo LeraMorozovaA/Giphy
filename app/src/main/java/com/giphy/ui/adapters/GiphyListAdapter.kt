@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.giphy.databinding.ItemGiphyBinding
-import com.giphy.network.model.Giphy
+import com.giphy.api.model.Giphy
 
 @SuppressLint("NotifyDataSetChanged")
 class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(String)-> Unit) : RecyclerView.Adapter<GiphyListAdapter.GiphyViewHolder>() {

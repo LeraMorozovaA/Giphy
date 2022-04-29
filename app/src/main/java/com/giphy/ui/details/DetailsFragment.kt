@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.giphy.R
 import com.giphy.databinding.FragmentDetailsBinding
-import com.giphy.network.model.Giphy
+import com.giphy.api.model.Giphy
 import com.giphy.ui.adapters.ViewPagerAdapter
 import com.giphy.ui.common.ViewState
 import com.giphy.ui.common.showAlert

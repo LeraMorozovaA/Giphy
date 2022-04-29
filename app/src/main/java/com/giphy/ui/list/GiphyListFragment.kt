@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.giphy.R
 import com.giphy.databinding.FragmentGiphyListBinding
-import com.giphy.network.model.Giphy
+import com.giphy.api.model.Giphy
 import com.giphy.ui.adapters.GiphyListAdapter
 import com.giphy.ui.common.ViewState
 import com.giphy.ui.common.hideKeyboard

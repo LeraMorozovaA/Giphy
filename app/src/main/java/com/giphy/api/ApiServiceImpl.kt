@@ -1,9 +1,9 @@
-package com.giphy.network
+package com.giphy.api
 
-import com.giphy.network.dto.GiphyDto
-import com.giphy.network.dto.GiphyResponse
-import com.giphy.network.dto.ImagesDto
-import com.giphy.network.dto.OriginalImageDto
+import com.giphy.api.dto.GiphyDto
+import com.giphy.api.dto.GiphyResponse
+import com.giphy.api.dto.ImagesDto
+import com.giphy.api.dto.OriginalImageDto
 import retrofit2.http.Query
 
 class ApiServiceImpl: ApiService {

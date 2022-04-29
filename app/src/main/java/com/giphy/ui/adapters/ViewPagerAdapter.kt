@@ -3,7 +3,7 @@ package com.giphy.ui.adapters
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.giphy.network.model.Giphy
+import com.giphy.api.model.Giphy
 import com.giphy.ui.details.DetailsGiphyFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapter(fragmentActivity) {

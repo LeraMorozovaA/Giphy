@@ -1,4 +1,4 @@
-package com.giphy.network.model
+package com.giphy.api.model
 
 data class Giphy(
     val id: String,

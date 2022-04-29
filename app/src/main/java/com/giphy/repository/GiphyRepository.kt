@@ -1,14 +1,12 @@
 package com.giphy.repository
 
 import com.giphy.data.dao.GiphyDao
-import com.giphy.network.ApiService
-import com.giphy.network.mapper.toDataModel
-import com.giphy.network.mapper.toModel
-import com.giphy.network.model.Giphy
+import com.giphy.api.ApiService
+import com.giphy.api.mapper.toDataModel
+import com.giphy.api.mapper.toModel
+import com.giphy.api.model.Giphy
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class GiphyRepository(
     private val apiService: ApiService,

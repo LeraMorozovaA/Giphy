@@ -1,6 +1,6 @@
-package com.giphy.network
+package com.giphy.api
 
-import com.giphy.network.dto.GiphyResponse
+import com.giphy.api.dto.GiphyResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

@@ -1,7 +1,6 @@
 package com.giphy.di
 
-import com.giphy.network.ApiService
-import com.giphy.network.ApiServiceImpl
+import com.giphy.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

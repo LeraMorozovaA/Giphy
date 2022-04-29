@@ -1,7 +1,7 @@
 package com.giphy.di
 
 import com.giphy.data.dao.GiphyDao
-import com.giphy.network.ApiService
+import com.giphy.api.ApiService
 import com.giphy.repository.GiphyRepository
 import dagger.Module
 import dagger.Provides
