@@ -3,7 +3,6 @@ package com.giphy.repository
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.giphy.api.ApiService
 import com.giphy.api.mapper.toModel
 import com.giphy.api.model.Giphy
@@ -26,7 +25,7 @@ class GiphyRepository(
         val pagingSourceFactory = { db.giphyDao().getAll() }
 
         return Pager(
-            config = PagingConfig(pageSize = 10),
+            config = PagingConfig(pageSize = PAGE_SIZE),
             remoteMediator = TrendingGiphyMediator(
                 apiService,
                 db
@@ -39,7 +38,7 @@ class GiphyRepository(
     fun getGiphyByQuery(query: String): Pager<Int, GiphyEntity> {
         val pagingSourceFactory = { db.giphyDao().getAll() }
         return Pager(
-            config = PagingConfig(pageSize = 10),
+            config = PagingConfig(pageSize = PAGE_SIZE),
             remoteMediator = SearchGiphyMediator(
                 query,
                 apiService,
@@ -53,5 +52,9 @@ class GiphyRepository(
         return withContext(Dispatchers.IO) {
             db.giphyDao().getGiphyList().map { it.toModel() }
         }
+    }
+
+    companion object{
+        private const val PAGE_SIZE = 10
     }
 }
