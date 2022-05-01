@@ -23,19 +23,21 @@ class GiphyListViewModel @Inject constructor(
     private val showGiphyList: StateFlow<Boolean?> = _showGiphyList.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val searchGiphy: StateFlow<PagingData<GiphyEntity>> = query
-        .map{ repository.getGiphyByQuery(it) }
-        .flatMapLatest { pager -> pager.flow }
-        .cachedIn(viewModelScope)
-        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     val giphy: StateFlow<PagingData<GiphyEntity>> = showGiphyList
         .map { repository.getGiphyList(it) }
         .filterNotNull()
         .flatMapLatest { pager -> pager.flow }
         .cachedIn(viewModelScope)
         .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val searchGiphy: StateFlow<PagingData<GiphyEntity>> = query
+        .map{ repository.getGiphyByQuery(it) }
+        .flatMapLatest { pager -> pager.flow }
+        .cachedIn(viewModelScope)
+        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+
 
     fun setQuery(query: String) {
         _query.tryEmit(query)

@@ -37,7 +37,7 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
 
     private val viewModel: GiphyListViewModel by viewModels()
     private var adapter: GiphyListAdapter? = null
-    private var shoulUpdateList = true
+    private var shouldUpdateList = true
     private lateinit var binding: FragmentGiphyListBinding
 
     override fun onCreateView(
@@ -56,9 +56,9 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
         setupListeners()
         collectUiState()
 
-        if (shoulUpdateList){
+        if (shouldUpdateList){
             viewModel.getGiphyList()
-            shoulUpdateList = false
+            shouldUpdateList = false
         }
     }
 
@@ -119,6 +119,7 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
             viewModel.giphy.collectLatest { list ->
                 val data = list.map { it.toModel() }
                 adapter?.submitData(data)
+                binding.recyclerView.scrollToPosition(0)
             }
         }
     }
