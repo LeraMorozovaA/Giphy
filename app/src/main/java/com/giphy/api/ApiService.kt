@@ -7,11 +7,15 @@ import retrofit2.http.Query
 interface ApiService {
 
     @GET("gifs/trending")
-    suspend fun getGiphyList(@Query(value = "limit") limit: Int): GiphyResponse
+    suspend fun getGiphyList(
+        @Query(value = "limit") limit: Int,
+        @Query(value = "offset") offset: Int
+    ): GiphyResponse
 
     @GET("gifs/search")
     suspend fun getGiphyByQuery(
         @Query(value = "q") q: String,
-        @Query(value = "limit") limit: Int
+        @Query(value = "limit") limit: Int,
+        @Query(value = "offset") offset: Int
     ): GiphyResponse
 }

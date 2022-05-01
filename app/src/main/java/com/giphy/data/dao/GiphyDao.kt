@@ -1,5 +1,6 @@
 package com.giphy.data.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -11,6 +12,9 @@ interface GiphyDao {
 
     @Query("SELECT * FROM giphy_items")
     fun getGiphyList(): List<GiphyEntity>
+
+    @Query("SELECT * FROM giphy_items")
+    fun getAll(): PagingSource<Int, GiphyEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(list: List<GiphyEntity>)

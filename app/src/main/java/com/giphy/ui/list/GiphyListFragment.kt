@@ -1,6 +1,7 @@
 package com.giphy.ui.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.paging.map
 import androidx.recyclerview.widget.GridLayoutManager
 import com.giphy.R
+import com.giphy.api.mapper.toModel
 import com.giphy.databinding.FragmentGiphyListBinding
 import com.giphy.api.model.Giphy
 import com.giphy.ui.adapters.GiphyListAdapter
@@ -23,15 +27,18 @@ import com.giphy.ui.common.showAlert
 import com.giphy.ui.details.DetailsFragment.Companion.ARG_GIPHY_POSITION
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
 
     private val viewModel: GiphyListViewModel by viewModels()
+    private var adapter: GiphyListAdapter? = null
+    private var shoulUpdateList = true
     private lateinit var binding: FragmentGiphyListBinding
-    private lateinit var adapter: GiphyListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,11 +54,16 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
 
         setupRecyclerView()
         setupListeners()
-        setupObserving()
+        collectUiState()
+
+        if (shoulUpdateList){
+            viewModel.getGiphyList()
+            shoulUpdateList = false
+        }
     }
 
     private fun setupRecyclerView() {
-        adapter = GiphyListAdapter(listOf(), onClick = { id ->
+        adapter = GiphyListAdapter(onClick = { id ->
             val bundle = bundleOf(ARG_GIPHY_POSITION to id)
             findNavController().navigate(R.id.action_giphyListFragment_to_detailsFragment, bundle)
 
@@ -79,25 +91,36 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
             if (it.isNullOrBlank())
                 return@doAfterTextChanged
 
-            viewModel.searchGiphyByQuery(it.toString())
+            viewModel.setQuery(it.toString())
         }
 
         binding.swipeRefresh.setOnRefreshListener {
+            binding.swipeRefresh.isRefreshing = false
             viewModel.getGiphyList()
+        }
+
+        adapter?.addLoadStateListener { state ->
+            binding.progress.isVisible = state.append is LoadState.Loading
+            if (state.refresh is LoadState.Error)
+                showErrorAlert()
         }
     }
 
-    private fun setupObserving() {
-        viewModel.viewState.onEach { state ->
-            when (state) {
-                is ViewState.Data -> showList(state.data)
-                is ViewState.Error -> showErrorAlert()
+    private fun collectUiState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.searchGiphy.collectLatest { list ->
+                val data = list.map { it.toModel() }
+                adapter?.submitData(data)
+                binding.recyclerView.scrollToPosition(0)
             }
+        }
 
-            binding.progress.isVisible = state is ViewState.Loading
-            binding.swipeRefresh.isRefreshing = false
-
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.giphy.collectLatest { list ->
+                val data = list.map { it.toModel() }
+                adapter?.submitData(data)
+            }
+        }
     }
 
     private fun showErrorAlert() {
@@ -108,8 +131,8 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
         )
     }
 
-    private fun showList(data: List<Giphy>) {
-        adapter.updateList(data)
-        binding.textEmptyList.isVisible = data.isEmpty()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        adapter = null
     }
 }

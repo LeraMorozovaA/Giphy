@@ -1,44 +1,59 @@
 package com.giphy.ui.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.giphy.R
 import com.giphy.databinding.ItemGiphyBinding
 import com.giphy.api.model.Giphy
 
-@SuppressLint("NotifyDataSetChanged")
-class GiphyListAdapter(private var data: List<Giphy>, private val onClick:(String)-> Unit) : RecyclerView.Adapter<GiphyListAdapter.GiphyViewHolder>() {
+class GiphyListAdapter(private val onClick: (String) -> Unit) :
+    PagingDataAdapter<Giphy, GiphyViewHolder>(GiphyDiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GiphyViewHolder {
         val binding = ItemGiphyBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return GiphyViewHolder(binding)
+        return GiphyViewHolder(binding, onClick)
     }
 
     override fun onBindViewHolder(holder: GiphyViewHolder, position: Int) {
-        with(holder){
-            with(data[position]) {
-                Glide.with(holder.itemView.context)
-                    .asGif()
-                    .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .load(url)
-                    .into(binding.itemGiphy)
+        holder.bind(getItem(position))
+    }
+}
 
-                holder.itemView.setOnClickListener { onClick.invoke(data[position].id) }
-            }
-        }
+class GiphyViewHolder(
+    private val binding: ItemGiphyBinding,
+    private val onClick: (String) -> Unit
+) : RecyclerView.ViewHolder(binding.root) {
+
+    private lateinit var giphy: Giphy
+
+    init {
+        binding.itemGiphy.setOnClickListener { onClick.invoke(giphy.id) }
     }
 
-    override fun getItemCount(): Int = data.size
+    fun bind(item: Giphy?) {
+        giphy = item ?: return
+        Glide.with(itemView.context)
+            .asGif()
+            .centerCrop()
+            .placeholder(R.drawable.ic_placeholder)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .load(giphy.url)
+            .into(binding.itemGiphy)
 
-    fun updateList(list: List<Giphy>){
-        data = list
-        notifyDataSetChanged()
+    }
+}
+
+class GiphyDiffCallBack : DiffUtil.ItemCallback<Giphy>() {
+    override fun areItemsTheSame(oldItem: Giphy, newItem: Giphy): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    inner class GiphyViewHolder(val binding: ItemGiphyBinding) : RecyclerView.ViewHolder(binding.root)
-
+    override fun areContentsTheSame(oldItem: Giphy, newItem: Giphy): Boolean {
+        return oldItem.id == newItem.id && oldItem.url == newItem.url
+    }
 }
