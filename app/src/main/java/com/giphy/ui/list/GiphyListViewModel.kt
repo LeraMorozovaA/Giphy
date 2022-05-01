@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.flatMap
+import com.giphy.api.model.Giphy
 import com.giphy.data.model.GiphyEntity
 import com.giphy.repository.GiphyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,5 +49,15 @@ class GiphyListViewModel @Inject constructor(
     fun getGiphyList(){
         _showGiphyList.tryEmit(true)
         _showGiphyList.tryEmit(null)
+    }
+
+    fun removeSelectedGiphyFromDb(list: List<Giphy>, query: String) = viewModelScope.launch {
+        val ids = list.map { it.id }
+        repository.removeSelectedGiphyFromDb(ids)
+
+        if (query.isEmpty())
+            getGiphyList()
+        else
+            setQuery(query)
     }
 }

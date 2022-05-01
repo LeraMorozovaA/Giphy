@@ -1,35 +1,33 @@
 package com.giphy.ui.list
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.os.bundleOf
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doBeforeTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.recyclerview.widget.GridLayoutManager
 import com.giphy.R
 import com.giphy.api.mapper.toModel
-import com.giphy.databinding.FragmentGiphyListBinding
 import com.giphy.api.model.Giphy
+import com.giphy.databinding.FragmentGiphyListBinding
 import com.giphy.ui.adapters.GiphyListAdapter
-import com.giphy.ui.common.ViewState
 import com.giphy.ui.common.hideKeyboard
 import com.giphy.ui.common.showAlert
 import com.giphy.ui.details.DetailsFragment.Companion.ARG_GIPHY_POSITION
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -38,6 +36,8 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
     private val viewModel: GiphyListViewModel by viewModels()
     private var adapter: GiphyListAdapter? = null
     private var shouldUpdateList = true
+    private val selectedItemsIdsList = mutableListOf<Giphy>()
+    private lateinit var giphyList: PagingData<Giphy>
     private lateinit var binding: FragmentGiphyListBinding
 
     override fun onCreateView(
@@ -54,6 +54,7 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
 
         setupRecyclerView()
         setupListeners()
+        setupMenu()
         collectUiState()
 
         if (shouldUpdateList){
@@ -62,14 +63,55 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
         }
     }
 
-    private fun setupRecyclerView() {
-        adapter = GiphyListAdapter(onClick = { id ->
-            val bundle = bundleOf(ARG_GIPHY_POSITION to id)
-            findNavController().navigate(R.id.action_giphyListFragment_to_detailsFragment, bundle)
+    private fun setupMenu() {
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu, menu)
+            }
 
-        })
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.delete -> {
+                        onDeleteMenuOptionClicked()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun onDeleteMenuOptionClicked() {
+        if (selectedItemsIdsList.isEmpty())
+            showEmptySelectedListAlert()
+
+        viewModel.removeSelectedGiphyFromDb(selectedItemsIdsList, binding.editText.text.toString())
+    }
+
+    private fun setupRecyclerView() {
+        adapter = GiphyListAdapter(
+            onClick = { id -> navigateToGiphyDetailsScreen(id) },
+            onLongClick = { id ->
+                adapter?.notifyDataSetChanged()
+                refreshSelectedGiphyList(id)
+            }
+        )
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = adapter
+    }
+
+    private fun refreshSelectedGiphyList(giphy: Giphy) {
+        val selectedGiphy = selectedItemsIdsList.firstOrNull { it.id == giphy.id }
+        if (selectedGiphy == null)
+            selectedItemsIdsList.add(giphy)
+        else
+            selectedItemsIdsList.remove(selectedGiphy)
+    }
+
+    private fun navigateToGiphyDetailsScreen(id: String) {
+        val bundle = bundleOf(ARG_GIPHY_POSITION to id)
+        findNavController().navigate(R.id.action_giphyListFragment_to_detailsFragment, bundle)
     }
 
     private fun setupListeners() {
@@ -110,6 +152,7 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.searchGiphy.collectLatest { list ->
                 val data = list.map { it.toModel() }
+                giphyList = data
                 adapter?.submitData(data)
                 binding.recyclerView.scrollToPosition(0)
             }
@@ -118,6 +161,7 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.giphy.collectLatest { list ->
                 val data = list.map { it.toModel() }
+                giphyList = data
                 adapter?.submitData(data)
                 binding.recyclerView.scrollToPosition(0)
             }
@@ -128,6 +172,14 @@ class GiphyListFragment: Fragment(R.layout.fragment_giphy_list) {
         MaterialAlertDialogBuilder(requireContext()).showAlert(
             title = getString(R.string.alert_title),
             message = getString(R.string.alert_message),
+            textButton = getString(R.string.alert_button)
+        )
+    }
+
+    private fun showEmptySelectedListAlert(){
+        MaterialAlertDialogBuilder(requireContext()).showAlert(
+            title = getString(R.string.alert_empty_list_title),
+            message = getString(R.string.alert_empty_list_message),
             textButton = getString(R.string.alert_button)
         )
     }

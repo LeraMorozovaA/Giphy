@@ -17,4 +17,7 @@ interface RemoteKeyDao {
 
     @Query("DELETE FROM remote_keys")
     suspend fun deleteAll()
+
+    @Query("DELETE FROM remote_keys WHERE giphyId=:id")
+    fun deleteKeysGiphyById(id: String)
 }

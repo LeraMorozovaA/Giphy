@@ -7,5 +7,8 @@
     <string name="alert_title">Oops..</string>
     <string name="alert_message">Something went wrong, please try again.</string>
     <string name="alert_message_try_later">Something went wrong, please try again later.</string>
+    <string name="alert_empty_list_title">The list is empty!</string>
+    <string name="alert_empty_list_message">Please select the giphy to delete.</string>
     <string name="alert_button">OK</string>
+    <string name="delete_giphy">Delete Giphy</string>
 </resources>

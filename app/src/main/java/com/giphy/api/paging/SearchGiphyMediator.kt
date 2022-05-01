@@ -10,6 +10,7 @@ import com.giphy.api.mapper.toDataModel
 import com.giphy.api.paging.MediatorHelper.Companion.LIMIT
 import com.giphy.api.paging.MediatorHelper.Companion.PAGE_SIZE
 import com.giphy.data.AppDatabase
+import com.giphy.data.local.LocalStorageService
 import com.giphy.data.model.GiphyEntity
 import com.giphy.data.model.RemoteKey
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,8 @@ import kotlinx.coroutines.withContext
 class SearchGiphyMediator(
     private val query: String,
     private val apiService: ApiService,
-    private val db: AppDatabase
+    private val db: AppDatabase,
+    private val localStorageService: LocalStorageService
 ) : RemoteMediator<Int, GiphyEntity>() {
 
     private val mediatorHelper = MediatorHelper(db)
@@ -43,7 +45,11 @@ class SearchGiphyMediator(
         }
 
         try {
-            val list = apiService.getGiphyByQuery(q = query, limit = LIMIT, offset = page).data.map { it.toDataModel() }
+            val deletedGiphyIds = localStorageService.getDeletedGiphyIdsSet()
+            val list = apiService.getGiphyByQuery(q = query, limit = LIMIT, offset = page)
+                .data
+                .filterNot { deletedGiphyIds.contains(it.id) }
+                .map { it.toDataModel() }
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {

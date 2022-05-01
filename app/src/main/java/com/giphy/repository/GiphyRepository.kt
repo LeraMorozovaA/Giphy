@@ -9,13 +9,15 @@ import com.giphy.api.model.Giphy
 import com.giphy.api.paging.SearchGiphyMediator
 import com.giphy.api.paging.TrendingGiphyMediator
 import com.giphy.data.AppDatabase
+import com.giphy.data.local.LocalStorageService
 import com.giphy.data.model.GiphyEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GiphyRepository(
     private val apiService: ApiService,
-    private val db: AppDatabase
+    private val db: AppDatabase,
+    private val localStorageService: LocalStorageService
 ) {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -28,7 +30,8 @@ class GiphyRepository(
             config = PagingConfig(pageSize = PAGE_SIZE),
             remoteMediator = TrendingGiphyMediator(
                 apiService,
-                db
+                db,
+                localStorageService
             ),
             pagingSourceFactory = pagingSourceFactory
         )
@@ -42,7 +45,8 @@ class GiphyRepository(
             remoteMediator = SearchGiphyMediator(
                 query,
                 apiService,
-                db
+                db,
+                localStorageService
             ),
             pagingSourceFactory = pagingSourceFactory
         )
@@ -51,6 +55,18 @@ class GiphyRepository(
     suspend fun getGiphyListFromDb(): List<Giphy> {
         return withContext(Dispatchers.IO) {
             db.giphyDao().getGiphyList().map { it.toModel() }
+        }
+    }
+
+    suspend fun removeSelectedGiphyFromDb(list: List<String>){
+        withContext(Dispatchers.IO) {
+            list.forEach { id ->
+                db.giphyDao().deleteGiphyById(id)
+                db.remoteKeyDao().deleteKeysGiphyById(id)
+            }
+            val newSet = localStorageService.getDeletedGiphyIdsSet().toMutableSet()
+            newSet.addAll(list)
+            localStorageService.setDeletedGiphyIdsSet(newSet)
         }
     }
 

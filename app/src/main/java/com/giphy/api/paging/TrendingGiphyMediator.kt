@@ -10,6 +10,7 @@ import com.giphy.api.mapper.toDataModel
 import com.giphy.api.paging.MediatorHelper.Companion.LIMIT
 import com.giphy.api.paging.MediatorHelper.Companion.PAGE_SIZE
 import com.giphy.data.AppDatabase
+import com.giphy.data.local.LocalStorageService
 import com.giphy.data.model.GiphyEntity
 import com.giphy.data.model.RemoteKey
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,8 @@ import java.lang.Exception
 @OptIn(ExperimentalPagingApi::class)
 class TrendingGiphyMediator(
     private val apiService: ApiService,
-    private val db: AppDatabase
+    private val db: AppDatabase,
+    private val localStorageService: LocalStorageService
 ): RemoteMediator<Int, GiphyEntity>() {
 
     private val mediatorHelper = MediatorHelper(db)
@@ -43,7 +45,11 @@ class TrendingGiphyMediator(
         }
 
         try {
-            val list = apiService.getGiphyList(limit = LIMIT, offset = page).data.map { it.toDataModel() }
+            val deletedGiphyIds = localStorageService.getDeletedGiphyIdsSet()
+            val list = apiService.getGiphyList(limit = LIMIT, offset = page)
+                .data
+                .filterNot { deletedGiphyIds.contains(it.id) }
+                .map { it.toDataModel() }
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
