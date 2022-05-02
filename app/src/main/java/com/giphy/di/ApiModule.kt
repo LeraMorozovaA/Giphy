@@ -56,9 +56,4 @@ object ApiModule {
 
         return retrofit.create(ApiService::class.java)
     }
-
-//    @Singleton
-//    @Provides
-//    fun provideApiServiceImpl(okHttpClient: OkHttpClient): ApiService = ApiServiceImpl()
-
 }
